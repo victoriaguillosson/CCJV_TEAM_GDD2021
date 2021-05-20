@@ -166,11 +166,20 @@ GO /* no hay fabricantes!!! */
 
 
 
+/*	Microprocesador	*/
+CREATE TABLE NOM_GRUPO.Microprocesador(
+microprocesador_codigo nvarchar(50) PRIMARY KEY,
+microprocesador_cache nvarchar(50) NULL,
+microprocesador_cant_hilos decimal(18, 0) NULL,
+microprocesador_velocidad nvarchar(50) NULL,
+fabricante_id INT REFERENCES NOM_GRUPO.Fabricante
+);
+GO
 
-/*
-[MICROPROCESADOR_CACHE] [nvarchar](50) NULL,
-	[MICROPROCESADOR_CANT_HILOS] [decimal](18, 0) NULL,
-	[MICROPROCESADOR_CODIGO] [nvarchar](50) NULL,
-	[MICROPROCESADOR_VELOCIDAD] [nvarchar](50) NULL,
-*/
+INSERT INTO NOM_GRUPO.Microprocesador (microprocesador_codigo,microprocesador_cache,microprocesador_cant_hilos,microprocesador_velocidad,fabricante_id)
+	SELECT DISTINCT m.MICROPROCESADOR_CODIGO, m.MICROPROCESADOR_CACHE, m.MICROPROCESADOR_CANT_HILOS,m.MICROPROCESADOR_VELOCIDAD, (SELECT f.fabricante_id FROM NOM_GRUPO.Fabricante f WHERE f.nombre=m.MICROPROCESADOR_FABRICANTE)
+	FROM gd_esquema.Maestra m
+	WHERE m.MICROPROCESADOR_CODIGO IS NOT NULL AND m.MICROPROCESADOR_CACHE IS NOT NULL AND m.MICROPROCESADOR_CANT_HILOS IS NOT NULL AND m.MICROPROCESADOR_VELOCIDAD IS NOT NULL;
+GO 
+
 
