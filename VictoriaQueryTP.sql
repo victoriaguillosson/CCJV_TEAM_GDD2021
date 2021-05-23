@@ -241,10 +241,11 @@ compra_sucursal_id INT REFERENCES CFJV_TEAM.Sucursal
 GO
 
 INSERT INTO CFJV_TEAM.Compra (compra_numero, compra_fecha, compra_precio, compra_sucursal_id)
-	SELECT DISTINCT m.COMPRA_NUMERO, m.COMPRA_FECHA, m.COMPRA_PRECIO/*, (SELECT TOP 1 s.sucursal_id FROM CFJV_TEAM.Sucursal s WHERE s.sucursal_id=m.SUC)*/
-	FROM gd_esquema.Maestra m
+	SELECT DISTINCT m.COMPRA_NUMERO, m.COMPRA_FECHA, m.COMPRA_PRECIO, s.sucursal_id
+	FROM gd_esquema.Maestra m, CFJV_TEAM.Sucursal s
 	WHERE m.COMPRA_NUMERO IS NOT NULL AND m.COMPRA_FECHA 
-						  IS NOT NULL AND m.COMPRA_PRECIO IS NOT NULL;
+						  IS NOT NULL AND m.COMPRA_PRECIO
+						  IS NOT NULL AND s.sucursal_id IS NOT NULL;
 GO
 
 --FACTURA
@@ -261,9 +262,11 @@ factura_cliente_id INT REFERENCES CFJV_TEAM.Cliente
 GO
 
 INSERT INTO CFJV_TEAM.Factura (factura_numero, factura_fecha, factura_precio, factura_sucursal_id, factura_cliente_id)
-	SELECT DISTINCT m.FACTURA_NUMERO, m.FACTURA_FECHA/*los otros no se como obtenerlos*/
-	FROM gd_esquema.Maestra m
-	WHERE m.FACTURA_NUMERO IS NOT NULL AND m.FACTURA_FECHA IS NOT NULL;
+	SELECT DISTINCT m.FACTURA_NUMERO, m.FACTURA_FECHA, s.sucursal_id, c.cliente_id
+	FROM gd_esquema.Maestra m, CFJV_TEAM.Sucursal s, CFJV_TEAM.Cliente c
+	WHERE m.FACTURA_NUMERO IS NOT NULL AND m.FACTURA_FECHA 
+						   IS NOT NULL AND s.sucursal_id 
+						   IS NOT NULL AND c.cliente_id IS NOT NULL;
 GO
 
 --PC
@@ -285,7 +288,8 @@ GO
 
 INSERT INTO CFJV_TEAM.PC (pc_codigo, pc_precio, pc_gabinete_codigo, pc_disco_rigido_codigo, pc_memoria_ram_codigo, 
 						  pc_microprocesador_codigo, pc_placa_video_codigo)
-	SELECT DISTINCT m.PC_CODIGO, m.COMPRA_PRECIO, g.gabinete_codigo, dr.disco_rigido_codigo, mr.memoria_ram_codigo, mc.microprocesador_codigo, pv.placa_video_codigo
+	SELECT DISTINCT m.PC_CODIGO, m.COMPRA_PRECIO, g.gabinete_codigo, dr.disco_rigido_codigo, mr.memoria_ram_codigo, 
+					mc.microprocesador_codigo, pv.placa_video_codigo
 	FROM gd_esquema.Maestra m, CFJV_TEAM.Gabinete g, CFJV_TEAM.DiscoRigido dr, CFJV_TEAM.MemoriaRAM mr, CFJV_TEAM.Microprocesador mc, CFJV_TEAM.PlacaVideo pv
 	WHERE m.PC_CODIGO IS NOT NULL AND m.COMPRA_PRECIO 
 					  IS NOT NULL AND g.gabinete_codigo 
@@ -333,7 +337,6 @@ GO
 --COMPRA ACCESORIO
 DROP TABLE CFJV_TEAM.CompraAccesorio
 GO
-
 
 CREATE TABLE CFJV_TEAM.CompraAccesorio (
 compra_accesorio_id INT PRIMARY KEY IDENTITY (1, 1),
