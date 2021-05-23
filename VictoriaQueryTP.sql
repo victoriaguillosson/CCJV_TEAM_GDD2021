@@ -102,6 +102,26 @@ INSERT INTO CFJV_TEAM.Accesorio (accesorio_codigo, accesorio_descripcion, acceso
 							 IS NOT NULL AND m.COMPRA_PRECIO IS NOT NULL;
 GO
 
+--FACTURA ACCESORIO
+/*DROP TABLE CFJV_TEAM.FacturaAccesorio
+GO*/
+
+CREATE TABLE CFJV_TEAM.FacturaAccesorio (
+factura_numero NVARCHAR(50) PRIMARY KEY, /*FK*/
+factura_accesorio_codigo NVARCHAR(50) NULL, /*FK*/
+factura_accesorio_cantidad NVARCHAR(50) NULL,
+factura_accesorio_precio DECIMAL(18, 2) NULL
+);
+GO
+
+INSERT INTO CFJV_TEAM.FacturaAccesorio (factura_numero, factura_accesorio_codigo, factura_accesorio_cantidad, factura_accesorio_precio)
+	SELECT DISTINCT m.FACTURA_NUMERO, m.ACCESORIO_CODIGO, m.COMPRA_CANTIDAD, m.COMPRA_PRECIO
+	FROM gd_esquema.Maestra m
+	WHERE m.FACTURA_NUMERO IS NOT NULL AND m.ACCESORIO_CODIGO 
+						   IS NOT NULL AND m.COMPRA_CANTIDAD 
+						   IS NOT NULL AND m.COMPRA_PRECIO IS NOT NULL;
+GO
+
 --GABINETE
 /*DROP TABLE CFJV_TEAM.Gabinete
 GO*/
@@ -227,4 +247,104 @@ INSERT INTO CFJV_TEAM.Compra (compra_numero, compra_fecha, compra_precio, compra
 						  IS NOT NULL AND m.COMPRA_PRECIO IS NOT NULL;
 GO
 
---
+--FACTURA
+/*DROP TABLE CFJV_TEAM.Factura
+GO*/
+
+CREATE TABLE CFJV_TEAM.Factura (
+factura_numero NVARCHAR(50) PRIMARY KEY,
+factura_fecha DATETIME2(3) NULL,
+factura_precio DECIMAL(18, 2) NULL,
+factura_sucursal_id INT REFERENCES CFJV_TEAM.Sucursal,
+factura_cliente_id INT REFERENCES CFJV_TEAM.Cliente
+);
+GO
+
+INSERT INTO CFJV_TEAM.Factura (factura_numero, factura_fecha, factura_precio, factura_sucursal_id, factura_cliente_id)
+	SELECT DISTINCT m.FACTURA_NUMERO, m.FACTURA_FECHA/*los otros no se como obtenerlos*/
+	FROM gd_esquema.Maestra m
+	WHERE m.FACTURA_NUMERO IS NOT NULL AND m.FACTURA_FECHA IS NOT NULL;
+GO
+
+--PC
+/*DROP TABLE CFJV_TEAM.PC
+GO*/
+
+CREATE TABLE CFJV_TEAM.PC (
+pc_codigo NVARCHAR(50) PRIMARY KEY,
+pc_numero_serie INT NULL,
+pc_precio DECIMAL(18, 2) NULL,
+pc_motherboard NVARCHAR(50) NULL,
+pc_gabinete_codigo INT REFERENCES CFJV_TEAM.Gabinete,
+pc_disco_rigido_codigo NVARCHAR(50) REFERENCES CFJV_TEAM.DiscoRigido,
+pc_memoria_ram_codigo NVARCHAR(50) REFERENCES CFJV_TEAM.MemoriaRAM,
+pc_microprocesador_codigo NVARCHAR(50) REFERENCES CFJV_TEAM.Microprocesador,
+pc_placa_video_codigo INT REFERENCES CFJV_TEAM.PlacaVideo
+);
+GO
+
+INSERT INTO CFJV_TEAM.PC (pc_codigo, pc_precio, pc_gabinete_codigo, pc_disco_rigido_codigo, pc_memoria_ram_codigo, 
+						  pc_microprocesador_codigo, pc_placa_video_codigo)
+	SELECT DISTINCT m.PC_CODIGO, m.COMPRA_PRECIO, g.gabinete_codigo, dr.disco_rigido_codigo, mr.memoria_ram_codigo, mc.microprocesador_codigo, pv.placa_video_codigo
+	FROM gd_esquema.Maestra m, CFJV_TEAM.Gabinete g, CFJV_TEAM.DiscoRigido dr, CFJV_TEAM.MemoriaRAM mr, CFJV_TEAM.Microprocesador mc, CFJV_TEAM.PlacaVideo pv
+	WHERE m.PC_CODIGO IS NOT NULL AND m.COMPRA_PRECIO 
+					  IS NOT NULL AND g.gabinete_codigo 
+					  IS NOT NULL AND dr.disco_rigido_codigo
+					  IS NOT NULL AND mr.memoria_ram_codigo
+					  IS NOT NULL AND mc.microprocesador_codigo
+					  IS NOT NULL AND pv.placa_video_codigo IS NOT NULL;
+GO
+
+--FACTURA PC
+/*DROP TABLE CFJV_TEAM.FacturaPC
+GO*/
+
+CREATE TABLE CFJV_TEAM.FacturaPC (
+factura_numero NVARCHAR(50) PRIMARY KEY, /*FK*/
+factura_pc_codigo NVARCHAR(50) NULL
+);
+GO
+
+INSERT INTO CFJV_TEAM.FacturaPC (factura_numero, factura_pc_codigo)
+	SELECT DISTINCT m.FACTURA_NUMERO, m.PC_CODIGO
+	FROM gd_esquema.Maestra m
+	WHERE m.FACTURA_NUMERO IS NOT NULL AND m.PC_CODIGO IS NOT NULL;
+GO
+
+--COMPRA PC
+/*DROP TABLE CFJV_TEAM.CompraPC
+GO*/
+
+CREATE TABLE CFJV_TEAM.CompraPC (
+compra_pc_compra_numero NVARCHAR(50) PRIMARY KEY,
+compra_pc_cantidad INT NULL,
+compra_pc_precio DECIMAL(18, 2) NULL,
+compra_pc_codigo NVARCHAR(50) REFERENCES CFJV_TEAM.PC
+);
+GO
+
+INSERT INTO CFJV_TEAM.CompraPC (compra_pc_compra_numero, compra_pc_precio, compra_pc_codigo)
+	SELECT DISTINCT m.COMPRA_NUMERO, pc.pc_codigo, pc.pc_precio
+	FROM gd_esquema.Maestra m, CFJV_TEAM.PC pc
+	WHERE m.COMPRA_NUMERO IS NOT NULL AND pc.pc_codigo 
+						  IS NOT NULL AND pc.pc_precio IS NOT NULL;
+GO
+
+--COMPRA ACCESORIO
+/*DROP TABLE CFJV_TEAM.CompraAccesorio
+GO*/
+
+CREATE TABLE CFJV_TEAM.CompraAccesorio (
+compra_accesorio_id INT PRIMARY KEY IDENTITY (1, 1),
+compra_accesorio_precio DECIMAL(18, 2) NULL,
+compra_accesorio_cantidad INT NULL,
+accesorio_codigo DECIMAL(18, 0) REFERENCES CFJV_TEAM.Accesorio
+);
+GO
+
+INSERT INTO CFJV_TEAM.CompraAccesorio (compra_accesorio_precio, accesorio_codigo)
+	SELECT DISTINCT ac.accesorio_precio, ac.accesorio_codigo
+	FROM  CFJV_TEAM.Accesorio ac
+	WHERE ac.accesorio_precio IS NOT NULL AND ac.accesorio_codigo IS NOT NULL;
+GO
+
