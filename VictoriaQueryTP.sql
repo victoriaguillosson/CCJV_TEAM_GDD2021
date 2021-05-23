@@ -8,8 +8,8 @@ GO
 /*Tablas*/
 
 --FABRICANTE
-/*DROP TABLE CFJV_TEAM.Fabricante
-GO*/
+DROP TABLE CFJV_TEAM.Fabricante
+GO
 
 CREATE TABLE CFJV_TEAM.Fabricante (
 fabricante_id INT PRIMARY KEY IDENTITY(1,1),
@@ -36,8 +36,8 @@ INSERT INTO CFJV_TEAM.Fabricante (nombre)
 GO
 
 --SUCURSAL
-/*DROP TABLE CFJV_TEAM.Sucursal
-GO*/
+DROP TABLE CFJV_TEAM.Sucursal
+GO
 
 CREATE TABLE CFJV_TEAM.Sucursal (
 sucursal_id INT PRIMARY KEY IDENTITY(1,1),
@@ -57,8 +57,8 @@ INSERT INTO CFJV_TEAM.Sucursal (sucursal_direccion, sucursal_ciudad, sucursal_ma
 GO
 
 --CLIENTE
-/*DROP TABLE CFJV_TEAM.Cliente
-GO*/
+DROP TABLE CFJV_TEAM.Cliente
+GO
 
 CREATE TABLE CFJV_TEAM.Cliente (
 cliente_id INT PRIMARY KEY IDENTITY(1,1),
@@ -84,8 +84,8 @@ INSERT INTO CFJV_TEAM.Cliente (cliente_dni, cliente_apellido, cliente_nombre, cl
 GO
 
 --ACCESORIO
-/*DROP TABLE CFJV_TEAM.Accesorio
-GO*/
+DROP TABLE CFJV_TEAM.Accesorio
+GO
 
 CREATE TABLE CFJV_TEAM.Accesorio (
 accesorio_codigo DECIMAL(18, 0) PRIMARY KEY,
@@ -103,8 +103,8 @@ INSERT INTO CFJV_TEAM.Accesorio (accesorio_codigo, accesorio_descripcion, acceso
 GO
 
 --FACTURA ACCESORIO
-/*DROP TABLE CFJV_TEAM.FacturaAccesorio
-GO*/
+DROP TABLE CFJV_TEAM.FacturaAccesorio
+GO
 
 CREATE TABLE CFJV_TEAM.FacturaAccesorio (
 factura_numero NVARCHAR(50) PRIMARY KEY, /*FK*/
@@ -123,8 +123,8 @@ INSERT INTO CFJV_TEAM.FacturaAccesorio (factura_numero, factura_accesorio_codigo
 GO
 
 --GABINETE
-/*DROP TABLE CFJV_TEAM.Gabinete
-GO*/
+DROP TABLE CFJV_TEAM.Gabinete
+GO
 
 CREATE TABLE CFJV_TEAM.Gabinete (
 gabinete_codigo INT PRIMARY KEY IDENTITY(1,1),
@@ -144,8 +144,8 @@ INSERT INTO CFJV_TEAM.Gabinete (gabinete_modelo, gabinete_ancho, gabinete_alto, 
 GO
 
 --MICROPROCESADOR
-/*DROP TABLE CFJV_TEAM.Gabinete
-GO*/
+DROP TABLE CFJV_TEAM.Microprocesador
+GO
 
 CREATE TABLE CFJV_TEAM.Microprocesador (
 microprocesador_codigo NVARCHAR(50) PRIMARY KEY,
@@ -165,8 +165,8 @@ INSERT INTO CFJV_TEAM.Microprocesador (microprocesador_codigo, microprocesador_c
 GO
 
 --PLACA DE VIDEO
-/*DROP TABLE CFJV_TEAM.Gabinete
-GO*/
+DROP TABLE CFJV_TEAM.PlacaVideo
+GO
 
 CREATE TABLE CFJV_TEAM.PlacaVideo (
 placa_video_codigo INT PRIMARY KEY IDENTITY(1,1),
@@ -187,8 +187,8 @@ INSERT INTO CFJV_TEAM.PlacaVideo (placa_video_chipset, placa_video_modelo, placa
 GO
 
 --MEMORIA RAM
-/*DROP TABLE CFJV_TEAM.MemoriaRAM
-GO*/
+DROP TABLE CFJV_TEAM.MemoriaRAM
+GO
 
 CREATE TABLE CFJV_TEAM.MemoriaRAM (
 memoria_ram_codigo NVARCHAR(50) PRIMARY KEY,
@@ -208,8 +208,8 @@ INSERT INTO CFJV_TEAM.MemoriaRAM (memoria_ram_codigo, memoria_ram_capacidad, mem
 GO
 
 --DISCO RIGIDO
-/*DROP TABLE CFJV_TEAM.DiscoRigido
-GO*/
+DROP TABLE CFJV_TEAM.DiscoRigido
+GO
 
 CREATE TABLE CFJV_TEAM.DiscoRigido (
 disco_rigido_codigo NVARCHAR(50) PRIMARY KEY,
@@ -229,8 +229,8 @@ INSERT INTO CFJV_TEAM.DiscoRigido (disco_rigido_codigo, disco_rigido_capacidad, 
 GO
 
 --COMPRA
-/*DROP TABLE CFJV_TEAM.Compra
-GO*/
+DROP TABLE CFJV_TEAM.Compra
+GO
 
 CREATE TABLE CFJV_TEAM.Compra (
 compra_numero NVARCHAR(50) PRIMARY KEY,
@@ -248,8 +248,8 @@ INSERT INTO CFJV_TEAM.Compra (compra_numero, compra_fecha, compra_precio, compra
 GO
 
 --FACTURA
-/*DROP TABLE CFJV_TEAM.Factura
-GO*/
+DROP TABLE CFJV_TEAM.Factura
+GO
 
 CREATE TABLE CFJV_TEAM.Factura (
 factura_numero NVARCHAR(50) PRIMARY KEY,
@@ -267,8 +267,8 @@ INSERT INTO CFJV_TEAM.Factura (factura_numero, factura_fecha, factura_precio, fa
 GO
 
 --PC
-/*DROP TABLE CFJV_TEAM.PC
-GO*/
+DROP TABLE CFJV_TEAM.PC
+GO
 
 CREATE TABLE CFJV_TEAM.PC (
 pc_codigo NVARCHAR(50) PRIMARY KEY,
@@ -296,8 +296,8 @@ INSERT INTO CFJV_TEAM.PC (pc_codigo, pc_precio, pc_gabinete_codigo, pc_disco_rig
 GO
 
 --FACTURA PC
-/*DROP TABLE CFJV_TEAM.FacturaPC
-GO*/
+DROP TABLE CFJV_TEAM.FacturaPC
+GO
 
 CREATE TABLE CFJV_TEAM.FacturaPC (
 factura_numero NVARCHAR(50) PRIMARY KEY, /*FK*/
@@ -312,8 +312,8 @@ INSERT INTO CFJV_TEAM.FacturaPC (factura_numero, factura_pc_codigo)
 GO
 
 --COMPRA PC
-/*DROP TABLE CFJV_TEAM.CompraPC
-GO*/
+DROP TABLE CFJV_TEAM.CompraPC
+GO
 
 CREATE TABLE CFJV_TEAM.CompraPC (
 compra_pc_compra_numero NVARCHAR(50) PRIMARY KEY,
@@ -331,8 +331,9 @@ INSERT INTO CFJV_TEAM.CompraPC (compra_pc_compra_numero, compra_pc_precio, compr
 GO
 
 --COMPRA ACCESORIO
-/*DROP TABLE CFJV_TEAM.CompraAccesorio
-GO*/
+DROP TABLE CFJV_TEAM.CompraAccesorio
+GO
+
 
 CREATE TABLE CFJV_TEAM.CompraAccesorio (
 compra_accesorio_id INT PRIMARY KEY IDENTITY (1, 1),
