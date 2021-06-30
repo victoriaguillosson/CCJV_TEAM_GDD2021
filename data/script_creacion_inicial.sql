@@ -218,7 +218,6 @@ SELECT @tab = 'CompraAccesorio';
 
 SELECT @SQL = 'CREATE TABLE '+@sch+'.'+@tab+'(
 compra_accesorio_codigo INT PRIMARY KEY IDENTITY(1,1),
-compra_accesorio_precio decimal(18, 2) NULL,
 compra_accesorio_cantidad decimal(18, 0) NULL,
 accesorio_codigo decimal(18, 0) REFERENCES '+@sch+'.Accesorio,
 compra_numero decimal(18, 0)  REFERENCES '+@sch+'.Compra
@@ -444,10 +443,11 @@ EXEC sp_executesql @SQL;
 
 SELECT @tab = 'CompraAccesorio';
 
-SELECT @SQL = 'INSERT INTO '+@sch+'.'+@tab+' (compra_accesorio_precio,compra_accesorio_cantidad,accesorio_codigo,compra_numero)
-	SELECT DISTINCT m.COMPRA_PRECIO, m.COMPRA_CANTIDAD,m.ACCESORIO_CODIGO, m.COMPRA_NUMERO
+SELECT @SQL = 'INSERT INTO '+@sch+'.'+@tab+' (compra_accesorio_cantidad,accesorio_codigo,compra_numero)
+	SELECT SUM(m.COMPRA_CANTIDAD),m.ACCESORIO_CODIGO, m.COMPRA_NUMERO
 	FROM gd_esquema.Maestra m
-	WHERE COMPRA_PRECIO IS NOT NULL AND COMPRA_CANTIDAD IS NOT NULL AND ACCESORIO_CODIGO IS NOT NULL AND COMPRA_NUMERO IS NOT NULL;';
+	WHERE ACCESORIO_CODIGO IS NOT NULL AND COMPRA_NUMERO IS NOT NULL
+	GROUP BY m.ACCESORIO_CODIGO, m.COMPRA_NUMERO;'
 
 PRINT '
 Completando... '+ @tab;
@@ -560,10 +560,11 @@ EXEC sp_executesql @SQL;
 SELECT @SQL = 'WITH temporal AS (
 	SELECT cc.compra_precio, a.precio
 	FROM '+@sch+'.'+@tab+' cc 
-	LEFT JOIN (SELECT c.compra_numero, SUM(ca.compra_accesorio_cantidad*ca.compra_accesorio_precio) as precio 
-	FROM '+@sch+'.'+@tab+' c
-	LEFT JOIN '+@sch+'.CompraAccesorio ca ON c.compra_numero=ca.compra_numero
-	GROUP BY c.compra_numero) a ON cc.compra_numero=a.compra_numero 
+	LEFT JOIN (SELECT c.compra_numero, SUM(ca.compra_accesorio_cantidad*ac.accesorio_precio) as precio 
+				FROM '+@sch+'.'+@tab+' c
+				LEFT JOIN '+@sch+'.CompraAccesorio ca ON c.compra_numero=ca.compra_numero
+				LEFT JOIN '+@sch+'.Accesorio ac ON ca.accesorio_codigo = ac.accesorio_codigo
+				GROUP BY c.compra_numero) a ON cc.compra_numero=a.compra_numero 
 )
 UPDATE temporal SET compra_precio=precio
 WHERE compra_precio IS NULL;';

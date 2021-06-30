@@ -319,6 +319,17 @@ DECLARE @SQL NVARCHAR(MAX);
 
 --Vistas para pcs
 
+SELECT @SQL = 'CREATE VIEW Tiempo_Promedio_Stock_PC
+				AS
+				SELECT v.BI_venta_pc_codigo PC, AVG(DATEDIFF(MONTH, c.BI_COMPRA_FECHA, v.BI_venta_fecha)) Meses_En_Stock
+				FROM (SELECT ROW_NUMBER() OVER(PARTITION BY v1.BI_venta_pc_codigo ORDER BY v1.BI_venta_fecha ASC) id,
+				v1.BI_venta_pc_codigo, v1.BI_venta_fecha FROM CFJV_TEAM.BI_VENTAS v1 WHERE v1.BI_venta_pc_codigo is not null)v
+				JOIN (SELECT ROW_NUMBER() OVER(PARTITION BY c1.BI_compra_pc_codigo ORDER BY c1.BI_compra_fecha ASC) id,
+				c1.BI_compra_pc_codigo,c1.BI_compra_fecha FROM CFJV_TEAM.BI_COMPRAS c1 WHERE c1.BI_compra_pc_codigo is not null) c
+				ON v.BI_venta_pc_codigo=c.BI_compra_pc_codigo AND v.id=c.id
+				GROUP BY v.BI_venta_pc_codigo';
+EXEC sp_executesql @SQL;
+
 SELECT @SQL = 'CREATE VIEW PrecioPromedioPCVendidasCompradas
 				AS
 				SELECT SUM(v.BI_VENTA_PRECIO) / COUNT(v.BI_FACTURA_NUMERO) precioPromedioVendido, AVG(c.BI_COMPRA_PRECIO) precioPromedioComprado, c.BI_COMPRA_PC_CODIGO
@@ -373,6 +384,19 @@ SELECT @SQL = 'CREATE VIEW Maximo_stock_por_sucursal_Accesorios
 				WHERE subq.BI_COMPRA_ACCESORIO_CODIGO is not null
 				GROUP BY BI_COMPRA_ACCESORIO_CODIGO, s.SUCURSAL_ID, SUCURSAL_DIRECCION, YEAR(BI_COMPRA_FECHA)';
 EXEC sp_executesql @SQL;
+
+SELECT @SQL = 'CREATE VIEW Tiempo_Promedio_Stock_Accesorio
+				AS
+				SELECT v.BI_venta_accesorio_codigo Accesorio, AVG(DATEDIFF(MONTH, c.BI_COMPRA_FECHA, v.BI_venta_fecha)) Meses_En_Stock
+				FROM (SELECT ROW_NUMBER() OVER(PARTITION BY v1.BI_venta_accesorio_codigo ORDER BY v1.BI_venta_fecha ASC) id,
+				v1.BI_VENTA_ACCESORIO_CODIGO, v1.BI_venta_fecha 
+				FROM CFJV_TEAM.BI_VENTAS v1 WHERE v1.BI_VENTA_ACCESORIO_CODIGO is not null)v
+				JOIN (SELECT ROW_NUMBER() OVER(PARTITION BY c1.BI_compra_accesorio_codigo ORDER BY c1.BI_compra_fecha ASC) id,
+				c1.BI_COMPRA_ACCESORIO_CODIGO,c1.BI_compra_fecha 
+				FROM CFJV_TEAM.BI_COMPRAS c1 WHERE c1.BI_COMPRA_ACCESORIO_CODIGO is not null) c
+				ON v.BI_VENTA_ACCESORIO_CODIGO=c.BI_COMPRA_ACCESORIO_CODIGO AND v.id=c.id
+				GROUP BY v.BI_VENTA_ACCESORIO_CODIGO';
+EXEC sp_executesql @SQL;
 END
 GO
 
@@ -422,3 +446,14 @@ GO
 
 /*Creo las views*/
 EXEC CFJV_TEAM.crearViews
+
+/* Elimino todos lo procedimientos creados */
+DECLARE @grupo VARCHAR(50)= 'CFJV_TEAM'
+EXEC checkProced @grupo,'checkTabla'
+EXEC checkProced @grupo,'crearDimenciones'
+EXEC checkProced @grupo,'completarDimenciones'
+EXEC checkProced @grupo,'checkView'
+EXEC checkProced @grupo,'crearView'
+DROP PROCEDURE dbo.checkProced;
+PRINT 'Eliminando procedure... checkProced'
+GO
